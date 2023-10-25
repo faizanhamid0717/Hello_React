@@ -1,0 +1,435 @@
+
+https://near-ethernet-088.notion.site/Video-Assessment-4-Notes-472db4caad964e689b8b82668d946116
+
+1. **What is the difference between State and Props in React ?**
+    
+    In React, both state and props are used to manage and pass data between components eg.
+    
+    state :-
+    const [product,setProduct]=useState([])
+
+    Props:-
+    {product.length>0 && product.map((ele)=>{
+        return(
+            <ProductCard key={ele.id} {...ele}/>
+        )
+    }
+      
+    )}
+
+
+  2.  ** What is prop drilling and explain it with an example (parent to child)? **
+
+  eg.  GrandparentComponent > ParentComponent > ChildComponent
+
+  function GrandparentComponent(){
+    const string = "Hi! May name is Faizan"
+
+    return <ParentComponent myProp={string} />
+  }
+export default GrandparentComponent;
+
+
+function ParentComponent(props){
+    return <ChildComponent myProp={props.string} />
+  }
+export default ParentComponent;
+
+
+function ChildComponent(props) {
+  return <div>{props.string}</div>;
+}
+
+export default ChildComponent;
+
+
+3. What is the difference between Real DOM and virtual DOM?
+
+- The real DOM is the actual browser representation of the HTML structure of a web page.
+- It is a tree-like structure where each HTML element is represented as a node.
+eg.
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sample Page</title>
+</head>
+<body>
+    <header>
+        <h1>Welcome to my Page</h1>
+    </header>
+    <nav>
+        <ul>
+            <li>Home</li>
+            <li>About</li>
+            <li>Contact</li>
+        </ul>
+    </nav>
+    <main>
+        <section>
+            <h2>About Us</h2>
+            <p>We are a team of passionate developers.</p>
+        </section>
+        <section>
+            <h2>Contact Us</h2>
+            <p>Email: example@example.com</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 My Website</p>
+    </footer>
+</body>
+</html>
+
+
+Virtual DOM:
+Definition:
+
+The Virtual DOM is an abstract representation of the Real DOM. It's a lightweight copy of the actual DOM tree.
+
+
+4. **What is the difference between a Class Component and a Functional Component? **
+
+In React, class components and functional components are two different ways to define and create components.
+
+Class component :- Class components are created by extending the base React.Component class provided by React. They are defined as JavaScript classes and use the ES6 class syntax. Class components are also known as stateful components because they have the ability to manage their own internal state using the setState method.
+Re-renders when the component's state or props change.
+
+
+import React, { Component } from 'react';
+
+class ClassComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      message: 'Hello from Class Component'
+    };
+  }
+
+  render() {
+    return <div>{this.state.message}</div>;
+  }
+}
+
+export default ClassComponent;
+
+
+Functional Components :- Functional components, on the other hand, are defined as plain JavaScript functions. They are also known as stateless components because they don't manage their own state. Instead, functional components receive props as input and return JSX elements as output. They are simpler and more lightweight compared to class components. Functional components can also use React hooks
+
+import React, { useState } from 'react';
+
+function FunctionalComponent() {
+  const [message, setMessage] = useState('Hello from Functional Component');
+
+  return <div>{message}</div>;
+}
+
+export default FunctionalComponent;
+
+
+5. UseEffect
+
+useEffect(()=>{
+      side-effect-code eg. fetching data, subscribing to events, or manually manipulating the DOM - it is an function that return the clean up code 
+      return()=>{
+        clean-up-function
+      }
+},[])
+
+
+6. useState(),useEffect(),useContext()
+
+useContext :-  {pending}how we can create provide and also consume in the same page 
+https://codesandbox.io/s/solitary-paper-fyjlvj?file=/src/App.js  {same page done}
+import React, {useState} from 'react'
+import { createContext } from 'react'
+
+export const AppContext = createContext()
+
+export default function AuthContextProvider({children}) {
+    const [isAuth,setIsAuth]=useState(false)     
+    const [token,setToken]=useState("")
+
+    const Login=(token)=>{
+         setIsAuth(true)
+         setToken(token)
+    }
+  
+    const Logout=()=>{
+        setIsAuth(false)
+        setToken('')
+    }
+
+
+  return (
+    <div>
+        <AppContext.Provider value={{isAuth,Login,Logout,token}}>
+          {children}
+        </AppContext.Provider>
+    </div>
+  )
+}
+
+
+index.js  :-
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <AuthContextProvider>
+    <App />
+  </AuthContextProvider>
+      
+  
+);
+
+
+7. useReducer()
+The useReducer hook is a built-in hook provided by React that allows you to manage more complex state in functional components. It is an alternative to the useState hook when you need to handle state transitions that involve multiple actions or have complex logic. useReducer follows the same pattern as the Redux library, where state transitions are determined by a reducer function
+
+const [state , dispatch] = useReducer(reducer, initialState);  //same as useState 
+const [isAuth, setIsAuth]= useState(false)
+
+import React, { useReducer } from 'react';
+
+const initialState = { count: 0 };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    case 'decrement':
+      return { count: state.count - 1 };
+    default:
+      throw new Error();
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const increment = () => {
+    dispatch({ type: 'increment' });
+  };
+
+  const decrement = () => {
+    dispatch({ type: 'decrement' });
+  };
+
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      <button onClick={increment}>Increment</button>
+      <button onClick={decrement}>Decrement</button>
+    </div>
+  );
+}
+
+
+
+8. React Life Cycle
+3phase 
+
+mounting :- when the React component is render to the Dom 
+updating :- when the react component gets updates which is already rendered to the Dom
+unmounting :- when the react component gets removed from the Dom
+
+eg. componet
+
+  function Counter(){
+    const [count,setCount] = useState(0)
+
+         useEffect(()=> {
+              const timerID = setTimeOut(()=> {
+                   setCount(count+1)
+              },1000)
+             return (()=>{
+                clearIntervel(timerID)
+             })
+
+         }, [])
+
+
+    return 
+    <>
+         <p>Count : {count}</p>
+    </>
+  }
+
+  here in this count when we start the couter gets render over the dom call mounting phase 
+and after each 1sec the counter value gets changed call updating phase and when we remove the counter from the ui  clean up function is called and that is call the unmounting phase
+
+
+ 9. Redux and flow of redux
+    Redux is an global state managemat library which flow the flux architecture and data flow is uni-directional it works on singal state of truth means we can store the data in one place in a single store
+                                 function reducer(state,action){
+                                    switch(action.type){
+                                        case "add":reture{count:count+action.payload}
+                                    }
+                                 }
+                                             REDUCER
+                                                /\  
+                                                |
+                                                \/ 
+    ACTION ------------> DISPATCH -----------> STORE ------------> UI/VIEW
+   const add={
+    type:INC_COUNT,    dispatch(add)    const store={count:0}      button
+    payload : 1
+   }
+
+
+    {Action} : is an js obj which has type and payload
+    {dispatch }: is an function which is used to dispatch the action to the store and update the store it is given by redux
+    {store} : is an global object where our entire state is stored
+    {Reducer} :when the action gets inside the store then the reducer check which action type is this and as per the logic inside it update the state and gave back and value gets stored in store 
+
+ 10. useRef()
+
+ The useRef hook in React is a way to create a mutable object that persists across component renders. It provides a reference to a DOM node or a value that won't trigger a re-render when it changes.
+
+ In simpler terms, useRef is like a box where you can put things (like a DOM element{eg.input} or any other value) and retrieve them later. Unlike state, changing the value inside this box doesn't cause the component to re-render.
+
+  It allows you to access and modify the properties of a DOM element or a value that persists between renders without triggering a re-render of the component
+
+ function usingUseref(){
+    const myRef = useRef()
+   
+   useEffect(()=>{
+        myRef.current.focus()
+   },[])
+
+    return (
+        <>
+           <input placeholder="Name" ref={myRef}/>
+        </>
+    )
+ }
+
+
+ 11. useMemo()   https://codesandbox.io/s/happy-dawn-7xqwky?file=/src/usememo.js:0-690
+
+     is a hook in React that helps you optimize performance by memoizing the result of a function.
+  It allows you to optimize performance by caching the computed value and returning it whenever the dependencies of the computation haven't changed
+  The useMemo hook takes two arguments: a function and an array of dependencies. The function represents the computation you want to memoize, and the dependencies are the values that the computation depends on. The hook will recompute the value only when one or more of the dependencies have changed.
+
+ import { useMemo } from "react";
+import { useState } from "react";
+
+
+
+function ExampleMemo() {
+  const [count, setCount] = useState(0);
+  const [item, setItem] = useState(10);
+
+when we use this function to multiply it works and give the output on each click of button inc-count
+but issue is there when i click the inc-item button the function also run in console value is not updated but in console it isalso running on item button so for performance we use useMemo() it will not run
+
+  // function multiply() {
+  //   console.warn("running");
+  //   return count * 2;
+  // }
+
+  const multiply = useMemo(() => {
+    console.warn("running using memo");
+    return count * 2;
+  }, [count]);
+
+  return (
+    <>
+      <h2>
+        count : {count} -- Multiply by 2 : {multiply}{" "}
+      </h2>
+      <h2> item : {item}</h2>
+
+      <!-- <button onClick={() => setCount(count + 1)}>Inc Count</button> -->
+      <!-- <button onClick={() => setItem(item * 5)}>Inc Item</button> -->
+    </>
+  );
+}
+
+export default ExampleMemo;
+
+
+
+12. useCallback()
+
+On the other hand, the useCallback hook is specifically designed to memoize functions. It returns a memoized version of the callback function that only changes if one or more of the dependencies have changed. It's particularly useful when passing callbacks to child components, as it ensures that the child components only re-render when necessary.
+
+https://codesandbox.io/s/reverent-mendeleev-ytcntr
+
+eg.todo.js and counter component 
+
+import { useCallback, useState } from "react";
+import Todos from "./todo";
+
+function ExampleuseCallback() {
+  const [count, setCount] = useState(0);
+  const [todo, setTodo] = useState([]);
+
+  const usecallback = useCallback(
+    function handelAddNewTodo() {
+      console.log("todo added");
+    },
+    [todo]
+  );
+
+  return (
+    <>
+      <h1>useCallBack HOOK</h1>
+      <h1>Count : {count}</h1>
+      <!-- <button onClick={() => setCount(count + 1)}>Update-count</button> -->
+
+      <Todos todo={todo} addNewTodo={usecallback} />
+    </>
+  );
+}
+
+export default ExampleuseCallback;
+
+
+import { memo } from "react";
+
+function Todos({ todo, addNewTodo }) {
+  console.log("rendring the todos");
+  return (
+    <>
+      <h1>List of todos</h1>
+    </>
+  );
+}
+
+export default memo(Todos);
+
+
+
+13. What are the main differences between the Context API and Redux in terms of state management in React?
+The Context API and Redux are both state management solutions in React, but they have some key differences in terms of their features, complexity, and use cases. Here are the main differences between the two:
+a. Centralized vs. Decentralized
+b. Middleware and Advanced Features:- Redux provides middleware functionality, which allows you to intercept and modify actions, perform asynchronous operations, and add custom logic to the data flow.The Context API does not have built-in middleware functionality, so you would need to implement any additional features or side effects manually.
+c. Scalability and Performance:
+
+14. What is reconciliation in React ? How does React's reconciliation algorithm work to efficiently update the user interface?
+Reconciliation in React refers to the process of updating the user interface to reflect changes in the component tree
+ When the state or props of a component change, React needs to determine what parts of the UI need to be updated, added, or removed.
+ a. Virtual DOM Comparison: React maintains a virtual representation of the DOM called the Virtual DOM. When a component's state or props change, React creates a new virtual representation of the updated component tree.
+ b. Element Diffing: React compares the new virtual representation with the previous one, element by element. It checks for differences in the type of element, keys, and props.
+
+ 15. What is the purpose of React Router? How does it handle routing in React applications?
+ React Router is a popular routing library for React applications. Its main purpose is to handle client-side routing, allowing you to create single-page applications with multiple views or pages.
+
+ import {Routes,Route} from "react-router-dom"
+
+ function AllRoutes() {
+  return (
+    <div>
+      <Routes>
+        <Route path='/' element={<Home/>}></Route>
+        <Route path="/login" element={<Login/>}></Route>
+        <Route path='/dashboard' element={ <PrivateRoute> <Dashboard/> </PrivateRoute>}></Route>
+        <Route path="/restaurants/:id" element={ <PrivateRoute><SingleRestaurantPage/></PrivateRoute>}></Route>
+      </Routes>
+    </div>
+  );
+}
+
+export default AllRoutes;
+
+Call this in App.js
+<!-- <AllRoutes/>  -->
